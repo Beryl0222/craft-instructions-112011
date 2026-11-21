@@ -19,7 +19,11 @@ def main():
     parser.add_argument("--id", help="仅显示指定编号的所有原始记录")
     args = parser.parse_args()
     directory = Path(__file__).resolve().parent / "data"
-    files = {path.stem: path for path in sorted(directory.glob("*.json"))}
+    # 只浏览交接资料原件；parses/confirmations 是试样编制器的结构化层，
+    # 形状不是记录数组，不在这里列出。
+    collection_names = ("directions", "handoff", "learners", "manuscripts", "samples", "stock")
+    files = {name: directory / f"{name}.json" for name in collection_names}
+    files = {name: path for name, path in files.items() if path.exists()}
     if not args.collection:
         if args.id:
             parser.error("按编号查看时需要指定资料集")
